@@ -1,4 +1,3 @@
 ﻿  CHM1.cpp
-F:\Repositories\VS2022\CHM\CHM1\CHM1\CHM1.cpp(352,19): warning C4244: '=': conversion from 'double' to 'realscal', possible loss of data
-F:\Repositories\VS2022\CHM\CHM1\CHM1\CHM1.cpp(449,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+F:\Repositories\VS2022\CHM\CHM1\CHM1\CHM1.cpp(442,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
   CHM1.vcxproj -> F:\Repositories\VS2022\CHM\CHM1\x64\Debug\CHM1.exe

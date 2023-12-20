@@ -4,9 +4,9 @@
 #include <string>
 #include <iomanip>
 
-typedef float real;
-typedef float realscal;
-int precision = 6;
+typedef double real;
+typedef double realscal;
+int precision = 14;
 int n;
 int notNullElements;
 using namespace std;
@@ -34,7 +34,7 @@ void inputNotNullElements(string path){
    }
 }
 
-struct StrData{
+struct sole{
    int shift = 0;
    real *diagnal = new real[n];
    real *f = new real[n];
@@ -58,14 +58,12 @@ struct StrData{
    void outputX(string path);
    void program1();
    void program2();
-   void bimbim();
-   void bambam();
    void Gauss();
    void program3();
    void prm(real m[][10]);
 };
 
-void StrData::inputDiagnal(string path){
+void sole::inputDiagnal(string path){
    ifstream file(path);
    if(file.is_open()){
       for(int i = 0; i < n; i++){
@@ -77,7 +75,7 @@ void StrData::inputDiagnal(string path){
    }
 }
 
-void StrData::inputIa(string path){
+void sole::inputIa(string path){
    ifstream file(path);
    if(file.is_open()){
       for(int i = 0; i<n+1; i++){
@@ -90,7 +88,7 @@ void StrData::inputIa(string path){
    }
 }
 
-void StrData::inputData(string path, real *arr){
+void sole::inputData(string path, real *arr){
    ifstream file(path);
    if(file.is_open()){
       for(int i = 0; i < notNullElements; i++){
@@ -103,7 +101,7 @@ void StrData::inputData(string path, real *arr){
    }
 }
 
-void StrData::inputVector(string path, real *arr){
+void sole::inputVector(string path, real *arr){
    ifstream file(path);
    if(file.is_open()){
       for(int i = 0; i < n; i++){
@@ -116,7 +114,7 @@ void StrData::inputVector(string path, real *arr){
 }
 
 
-void StrData::printAllData(){
+void sole::printAllData(){
    for(int i = 0; i<n+1; i++){
       cout << ia[i] << endl;
    }cout << "\n\n\n";
@@ -134,7 +132,7 @@ void StrData::printAllData(){
    }cout << "\n\n\n";
 }
 
-void StrData::printLU(){
+void sole::printLU(){
    cout << "U matrix:" << endl;
    for(int i = 0; i<n; i++){
       for(int j = 0; j<n; j++){
@@ -168,7 +166,7 @@ void StrData::printLU(){
    }cout << "\n\n\n";
 }
 
-void StrData::calculateU(int i, int j){
+void sole::calculateU(int i, int j){
    realscal sum = 0;
    real oldElem = 0, L = 0, U = 0;
    if(i==j){
@@ -212,7 +210,7 @@ void StrData::calculateU(int i, int j){
    }
 }
 
-void StrData::calculateL(int i, int j){
+void sole::calculateL(int i, int j){
    realscal sum = 0;
    real oldElem = 0, L = 0, U = 0;
    if(i-shift > j){
@@ -243,7 +241,7 @@ void StrData::calculateL(int i, int j){
    al[ia[i+1]-1-(i-j)] = sum;
 }
 
-void StrData::LUdecomposition(){
+void sole::LUdecomposition(){
    for(int h = 0; h<n; h++){
       for(int j = h; j<=n-1; j++){
          shift = ia[j+1]-ia[j];
@@ -267,7 +265,7 @@ void StrData::LUdecomposition(){
    }
 }
 
-void StrData::calculateY(){
+void sole::calculateY(){
    realscal sum;
    real L;
    for(int i = 0; i<n; i++){
@@ -288,7 +286,7 @@ void StrData::calculateY(){
    }
 }
 
-void StrData::calculateX(){
+void sole::calculateX(){
    realscal sum;
    real U;
    for(int i = n-1; i!= -1; i--){
@@ -310,7 +308,7 @@ void StrData::calculateX(){
    }
 }
 
-void StrData::outputX(string path){
+void sole::outputX(string path){
    ofstream file(path);
    if(file.is_open()){
       for(int i = 0; i<n-1; i++){
@@ -323,7 +321,7 @@ void StrData::outputX(string path){
 
 }
 
-void StrData::program1(){
+void sole::program1(){   //LU декомпозиция и вычисление векторов поочерёдно
    inputDiagnal("diagnal.txt");
    inputIa("ia.txt");
    inputData("al.txt", al);
@@ -363,7 +361,7 @@ void generateHilbert(){
    diagnalFile.close();
 }
 
-void StrData::program2(){
+void sole::program2(){   //LU декомпозиция и вычисление векторов поочерёдно сгенерированной матрицы Гильберта
    inputDiagnal("diagnal.txt");
    inputIa("ia.txt");
    inputData("al.txt", al);
@@ -378,7 +376,7 @@ void StrData::program2(){
    outputX("output.txt");
 }
 
-void StrData::Gauss(){
+void sole::Gauss(){
    real matrix[10][11]{};
 
    for(int i = 0; i<n; i++){
@@ -428,7 +426,7 @@ void StrData::Gauss(){
    }
 }
 
-void StrData::program3(){
+void sole::program3(){   //Вычисление вектора х по методу Гаусса из матрицы размерности 10
    inputDiagnal("diagnal.txt");
    inputIa("ia.txt");
    inputData("al.txt", al);
@@ -441,8 +439,8 @@ void StrData::program3(){
 void main()
 {
    inputSize("size.txt");
-   //generateHilbert();
+   //generateHilbert();   
    inputNotNullElements("ia.txt");
-   StrData data;
+   sole data;
    data.program3();
 }
