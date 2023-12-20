@@ -4,9 +4,9 @@
 #include <string>
 #include <iomanip>
 
-typedef double real;
-typedef double realscal;
-int precision = 14;
+typedef float real;
+typedef float realscal;
+int precision = 6;
 int n;
 int notNullElements;
 using namespace std;
@@ -57,8 +57,11 @@ struct StrData{
    void printLU();
    void outputX(string path);
    void program1();
-
    void program2();
+   void bimbim();
+   void Gauss();
+   void program3();
+   void prm(real m[][4]);
 };
 
 void StrData::inputDiagnal(string path){
@@ -330,8 +333,8 @@ void StrData::program1(){
    calculateY();
    calculateX();
    outputX("output.txt");
-   //outputX("output.txt", 14);
 }
+
 
 void generateHilbert(){
    ofstream iaFile("ia.txt");
@@ -375,11 +378,172 @@ void StrData::program2(){
    outputX("output.txt");
 }
 
+void StrData::bimbim(){
+   real matrix[4][4]{};
+   real matrixClone[4][4]{};
+
+   for(int i = 0; i<n; i++){
+      for(int j = 0; j<n; j++){
+         if(i==j){
+            matrix[i][j] = diagnal[i];
+            matrixClone[i][j] = diagnal[i];
+         } else{
+            if(i<j){
+               if(ia[j+1]-ia[j] != 0 && j-(ia[j+1]-ia[j]) <= i){
+                  matrix[i][j] = au[ia[j+1]-1-(j-i)];
+                  matrixClone[i][j] = au[ia[j+1]-1-(j-i)];
+               }
+            } else{
+               if(ia[i+1]-ia[i] != 0 && i-(ia[i+1]-ia[i]) <= j){
+                  matrix[i][j] = al[ia[i+1]-1-(i-j)];
+                  matrixClone[i][j] = al[ia[i+1]-1-(i-j)];
+               }
+            }
+         }
+         cout << matrix[i][j];
+         j==3 ? cout<<"" : cout<<", ";
+      }
+      cout << endl;
+   }cout << "\n\n\n";
+
+   for(int k = 0; k<n; k++){
+      for(int j = 0; j<n; j++){
+         matrixClone[k][j] = matrixClone[k][j] / matrix[k][k];
+      }
+      f[k] = f[k] / matrix[k][k];
+      prm(matrixClone);
+      for(int i = k+1; i<n; i++){
+         real K = matrixClone[i][k] / matrixClone[k][k];
+         for(int j = 0; j<n; j++){
+            matrixClone[i][j] = matrixClone[i][j] - matrixClone[k][j] * K;
+         }
+         f[i] = f[i] - f[k] * K;
+         prm(matrixClone);
+      }
+   }
+
+   for(int k = n - 1; k>-1; k--){
+      if(matrixClone[k][k] != 1){
+         real K = 1 / matrixClone[k][k];
+         for(int j = n; j>k-1; j--){
+            matrixClone[k][j] *= K;
+         }
+         f[k] *= K;
+         prm(matrixClone);
+      }
+   }
+
+   for(int k = n-1; k>-1; k--){
+      real buf = 0;
+      for(int j = n-1; k != n-1 && j>k; j--){
+         buf -= matrixClone[k][j] * x[j];
+      }
+      x[k] = f[k] - buf;
+   }
+
+   for(int i = 0; i<n; i++){
+      cout << x[i] << endl;
+   }
+}
+/*
+void StrData::Gauss(){
+   real matrix[4][4]{};
+   real matrixClone[4][5]{};
+
+   for(int i = 0; i<n; i++){
+      for(int j = 0; j<n; j++){
+         if(i==j){
+            matrix[i][j] = diagnal[i];
+            matrixClone[i][j] = diagnal[i];
+         } else{
+            if(i<j){
+               if(ia[j+1]-ia[j] != 0 && j-(ia[j+1]-ia[j]) <= i){
+                  matrix[i][j] = au[ia[j+1]-1-(j-i)];
+                  matrixClone[i][j] = au[ia[j+1]-1-(j-i)];
+               }
+            } else{
+               if(ia[i+1]-ia[i] != 0 && i-(ia[i+1]-ia[i]) <= j){
+                  matrix[i][j] = al[ia[i+1]-1-(i-j)];
+                  matrixClone[i][j] = al[ia[i+1]-1-(i-j)];
+               }
+            }
+         }
+         cout << matrix[i][j];
+         j==3 ? cout<<"" : cout<<", ";
+      }
+      cout << endl;
+   }cout << "\n\n\n";
+   //Прямой ход, зануление нижнего левого угла
+   for(int k = 0; k<n; k++){
+      for(int j = 0; j<n+1; j++){
+         matrixClone[k][j] = matrixClone[k][j] / matrix[k][k];
+      }
+      prm(matrixClone);
+      f[k] = f[k] / matrix[k][k];
+      for(int i = k+1; i<n; i++){
+         real K = matrixClone[i][k] / matrixClone[k][k];
+         for(int j = 0; j<n+1; j++){
+            matrixClone[i][j] = matrixClone[i][j] - matrixClone[k][j] * K;
+         }
+         prm(matrixClone);
+         f[i] = f[i] - f[k] * K;
+      }
+      for(int i = 0; i<n; i++){
+         for(int j = 0; j<n; j++){
+            matrix[i][j] = matrixClone[i][j];
+         }
+      }
+   }
+   //Обратный ход, зануление верхнего правого угла
+   for(int k = n-1; k>-1; k--){
+      for(int i = n; i>-1; i--){
+         matrixClone[k][i] = matrixClone[k][i] / matrix[k][k];
+      }
+      prm(matrixClone);
+      f[k] = f[k] / matrix[k][k];
+      for(int i = k-1; i>-1; i--){
+         real K = matrixClone[i][k] / matrixClone[k][k];
+         for(int j = n; j>-1; j--){
+            matrixClone[i][j] = matrixClone[i][j] - matrixClone[k][j] * K;
+         }
+         prm(matrixClone);
+         f[i] = f[i] - f[k] * K;
+      }
+   }
+   //Отделяем от общей матрицы ответы
+   for(int i = 0; i<n; i++){
+      //x[i] = matrixClone[i][n];
+      cout << f[i] << endl;
+   }
+}
+*/
+
+void StrData::prm(real m[][4]){
+   for(int i = 0; i<4; i++){
+      for(int j = 0; j<4; j++){
+         cout << m[i][j];
+         j==3 ? cout<<"" : cout<<", ";
+      }
+      cout << "    ["<<f[i]<<"]\n";
+   }
+   cout << "\n\n\n";
+}
+
+
+void StrData::program3(){
+   inputDiagnal("diagnal.txt");
+   inputIa("ia.txt");
+   inputData("al.txt", al);
+   inputData("au.txt", au);
+   inputVector("f.txt", f);
+   bimbim();
+}
+
 void main()
 {
    inputSize("size.txt");
-   generateHilbert();
-   //inputNotNullElements("ia.txt");
+   //generateHilbert();
+   inputNotNullElements("ia.txt");
    StrData data;
-   data.program2();
+   data.program3();
 }
